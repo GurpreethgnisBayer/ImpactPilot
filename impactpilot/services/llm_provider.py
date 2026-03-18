@@ -1,8 +1,12 @@
-"""LLM provider abstraction for Ollama and OpenAI-compatible endpoints."""
+"""LLM provider abstraction for Ollama, Azure OpenAI, and OpenAI-compatible endpoints."""
 
 import requests
+import urllib3
 from typing import Optional
 from abc import ABC, abstractmethod
+
+# Suppress SSL warnings for internal/corporate network use
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class LLMProvider(ABC):
@@ -45,7 +49,7 @@ class OllamaProvider(LLMProvider):
         }
         
         try:
-            response = requests.post(url, json=payload, timeout=60)
+            response = requests.post(url, json=payload, timeout=60, verify=False)
             response.raise_for_status()
             data = response.json()
             return data.get("response", "")
@@ -86,7 +90,50 @@ class OpenAICompatibleProvider(LLMProvider):
         }
         
         try:
-            response = requests.post(url, json=payload, headers=headers, timeout=60)
+            response = requests.post(url, json=payload, headers=headers, timeout=60, verify=False)
+            response.raise_for_status()
+            data = response.json()
+            return data["choices"][0]["message"]["content"]
+        except Exception as e:
+            return f"Error generating response: {e}"
+
+
+class AzureOpenAIProvider(LLMProvider):
+    """Azure OpenAI provider using the native Azure REST API format."""
+
+    API_VERSION = "2024-02-01"
+
+    def __init__(self, base_url: str, api_key: str, deployment: str, temperature: float = 0.7):
+        self.base_url = base_url.rstrip('/')
+        self.api_key = api_key
+        self.deployment = deployment
+        self.temperature = temperature
+
+    def generate(self, prompt: str) -> str:
+        """
+        Generate text using Azure OpenAI chat completions endpoint.
+
+        Args:
+            prompt: The prompt text
+
+        Returns:
+            Generated text response
+        """
+        url = (
+            f"{self.base_url}/openai/deployments/{self.deployment}"
+            f"/chat/completions?api-version={self.API_VERSION}"
+        )
+        headers = {
+            "api-key": self.api_key,
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": self.temperature
+        }
+
+        try:
+            response = requests.post(url, json=payload, headers=headers, timeout=60, verify=False)
             response.raise_for_status()
             data = response.json()
             return data["choices"][0]["message"]["content"]
@@ -97,21 +144,32 @@ class OpenAICompatibleProvider(LLMProvider):
 def get_provider(settings: dict) -> Optional[LLMProvider]:
     """
     Get LLM provider instance from settings.
-    
+
     Args:
         settings: LLM settings dictionary
-        
+
     Returns:
         LLMProvider instance or None
     """
     provider_type = settings.get("provider", "ollama")
-    
+
     if provider_type == "ollama":
         return OllamaProvider(
             host=settings.get("ollama_host", "http://localhost:11434"),
             model=settings.get("ollama_model", "llama2"),
             temperature=settings.get("temperature", 0.7),
             max_tokens=settings.get("max_tokens", 1000)
+        )
+    elif provider_type == "azure_openai":
+        api_key = settings.get("openai_api_key", "")
+        deployment = settings.get("azure_deployment", "")
+        if not api_key or not deployment:
+            return None
+        return AzureOpenAIProvider(
+            base_url=settings.get("openai_base_url", ""),
+            api_key=api_key,
+            deployment=deployment,
+            temperature=settings.get("temperature", 0.7)
         )
     elif provider_type == "openai_compatible":
         api_key = settings.get("openai_api_key", "")
@@ -123,5 +181,5 @@ def get_provider(settings: dict) -> Optional[LLMProvider]:
             model=settings.get("openai_model", "gpt-3.5-turbo"),
             temperature=settings.get("temperature", 0.7)
         )
-    
+
     return None

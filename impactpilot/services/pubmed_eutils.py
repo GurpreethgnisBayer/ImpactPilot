@@ -1,9 +1,13 @@
 """PubMed E-utilities API wrapper for searching and fetching articles."""
 
 import requests
+import urllib3
 import xml.etree.ElementTree as ET
 from typing import Optional
 from urllib.parse import quote_plus
+
+# Suppress SSL warnings for internal/corporate network use
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 EUTILS_BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 ESEARCH_URL = f"{EUTILS_BASE}/esearch.fcgi"
@@ -39,7 +43,10 @@ def build_term(
     # Base query with optional field restriction
     if base_query:
         if field_restriction:
-            term_parts.append(f"({base_query}[{field_restriction}])")
+            import re
+            tokens = [kw.strip() for kw in re.split(r"\s+AND\s+|\s+OR\s+|\s+", base_query) if kw.strip()]
+            tagged = [f"{token}[{field_restriction}]" for token in tokens]
+            term_parts.append(" AND ".join(tagged))
         else:
             term_parts.append(base_query)
     
@@ -54,7 +61,7 @@ def build_term(
         term_parts.append(f"{language}[Language]")
     
     if has_abstract:
-        term_parts.append("hasabstract")
+        term_parts.append('"hasabstract"[Filter]')
     
     if publication_types:
         for pub_type in publication_types:
@@ -103,12 +110,16 @@ def esearch(
         params["maxdate"] = maxdate
     
     try:
-        response = requests.get(ESEARCH_URL, params=params, timeout=10)
+        print("[PubMed eSearch] Query:", params["term"])
+        print("[PubMed eSearch] URL:", ESEARCH_URL)
+        response = requests.get(ESEARCH_URL, params=params, timeout=10, verify=False)
+        print("[PubMed eSearch] Status:", response.status_code)
+        print("[PubMed eSearch] Response:", response.text[:500])  # Print first 500 chars
         response.raise_for_status()
-        
         # Parse XML response
         root = ET.fromstring(response.content)
         pmids = [id_elem.text for id_elem in root.findall(".//Id") if id_elem.text]
+        print("[PubMed eSearch] PMIDs:", pmids)
         return pmids
     except Exception as e:
         print(f"eSearch error: {e}")
@@ -136,7 +147,7 @@ def efetch(pmids: list[str]) -> list[dict]:
     }
     
     try:
-        response = requests.get(EFETCH_URL, params=params, timeout=15)
+        response = requests.get(EFETCH_URL, params=params, timeout=15, verify=False)
         response.raise_for_status()
         
         # Parse XML response

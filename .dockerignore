@@ -1,0 +1,35 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.egg
+*.egg-info/
+dist/
+build/
+.env
+venv/
+.idea/
+.vscode/
+.git/
+
+# Ignore test and notebook outputs
+*.ipynb
+*.log
+
+# Ignore local files
+local_settings.py
+
+# Ignore coverage and reports
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Ignore Docker artifacts
+Dockerfile

@@ -3,6 +3,7 @@
 import streamlit as st
 from impactpilot.query_suggest import suggest_pubmed_query
 from impactpilot.services.pubmed_eutils import search_pubmed
+from impactpilot.services.llm_provider import get_provider
 from impactpilot.evidence_numbers import extract_all_numeric_evidence
 from impactpilot.assumptions import derive_assumptions
 from impactpilot.calc import compute_tco, compute_productivity
@@ -64,8 +65,10 @@ def render_step_1_evidence_shell():
         title = st.session_state.idea.get("title", "")
         description = st.session_state.idea.get("description", "")
         if title or description:
-            from impactpilot.query_suggest import suggest_pubmed_query
-            st.session_state.evidence_query["query"] = suggest_pubmed_query(title, description)
+            provider = get_provider(st.session_state.llm_settings)
+            st.session_state.evidence_query["query"] = suggest_pubmed_query(
+                title, description, provider=provider
+            )
     
     # Auto-update toggle
     auto_update = st.checkbox(
@@ -550,9 +553,10 @@ def _auto_update_query_from_idea():
     if st.session_state.auto_update_query:
         title = st.session_state.get("idea_title_input", "")
         description = st.session_state.get("idea_description_input", "")
-        
-        # Generate suggested query
-        suggested_query = suggest_pubmed_query(title, description)
-        
+
+        # Generate suggested query – use LLM if available, fallback to keywords
+        provider = get_provider(st.session_state.get("llm_settings", {}))
+        suggested_query = suggest_pubmed_query(title, description, provider=provider)
+
         # Update the evidence query
         st.session_state.evidence_query["query"] = suggested_query

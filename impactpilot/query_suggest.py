@@ -1,6 +1,10 @@
 """Auto-suggest PubMed query keywords from R&D idea input."""
 
 import re
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from impactpilot.services.llm_provider import LLMProvider
 
 # Built-in stopwords to filter out
 STOPWORDS = {
@@ -10,22 +14,45 @@ STOPWORDS = {
 }
 
 
-def suggest_pubmed_query(title: str, description: str) -> str:
+def suggest_pubmed_query(title: str, description: str, provider: Optional["LLMProvider"] = None) -> str:
     """
     Generate a PubMed query string from idea title and description.
-    
-    Improved approach for better PubMed results:
-    1. Prioritize title words over description words
-    2. Keep only 5-6 key terms (broader results)
-    3. Join with AND for explicit boolean logic
-    
+
+    If an LLM provider is supplied it is used to generate a properly structured
+    PubMed boolean query.  Falls back to pure-Python keyword extraction when no
+    provider is available or when the LLM call fails.
+
     Args:
         title: The idea title
         description: The idea description
-        
+        provider: Optional LLM provider to improve query quality
+
     Returns:
         A query string suitable for PubMed search (never empty)
     """
+    if provider is not None:
+        try:
+            prompt = (
+                "You are a biomedical literature search expert. "
+                "Given an R&D idea, generate a concise PubMed boolean search query "
+                "using AND/OR operators and MeSH-style terms. "
+                "Return ONLY the query string, no explanation, no quotes around the whole string.\n\n"
+                f"Idea title: {title}\n"
+                f"Idea description: {description}\n\n"
+                "PubMed query:"
+            )
+            result = provider.generate(prompt).strip()
+            # Basic sanity check: must be non-empty and not an error message
+            if result and not result.lower().startswith("error"):
+                return result
+        except Exception:
+            pass  # Fall through to keyword extraction
+
+    return _keyword_fallback(title, description)
+
+
+def _keyword_fallback(title: str, description: str) -> str:
+    """Pure-Python keyword extraction fallback."""
     # Tokenize title and description separately
     title_tokens = re.findall(r'\b[\w-]+\b', title.lower())
     desc_tokens = re.findall(r'\b[\w-]+\b', description.lower())

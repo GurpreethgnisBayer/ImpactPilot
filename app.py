@@ -23,10 +23,16 @@ with st.sidebar:
     
     provider = st.selectbox(
         "LLM Provider",
-        options=["ollama", "openai_compatible"],
-        index=0 if st.session_state.llm_settings["provider"] == "ollama" else 1,
+        options=["ollama", "azure_openai", "openai_compatible"],
+        index={"ollama": 0, "azure_openai": 1, "openai_compatible": 2}.get(
+            st.session_state.llm_settings["provider"], 1
+        ),
         key="llm_provider_select",
-        format_func=lambda x: "Ollama (Local)" if x == "ollama" else "OpenAI-Compatible API"
+        format_func=lambda x: {
+            "ollama": "Ollama (Local)",
+            "azure_openai": "Azure OpenAI",
+            "openai_compatible": "OpenAI-Compatible API"
+        }[x]
     )
     st.session_state.llm_settings["provider"] = provider
     
@@ -68,6 +74,42 @@ with st.sidebar:
         )
         st.session_state.llm_settings["max_tokens"] = st.session_state.ollama_max_tokens_input
         
+    elif provider == "azure_openai":
+        st.text_input(
+            "Azure Endpoint",
+            value=st.session_state.llm_settings["openai_base_url"],
+            key="azure_base_url_input",
+            help="e.g., https://myresource.openai.azure.com"
+        )
+        st.session_state.llm_settings["openai_base_url"] = st.session_state.azure_base_url_input
+
+        st.text_input(
+            "API Key",
+            value=st.session_state.llm_settings["openai_api_key"],
+            type="password",
+            key="azure_api_key_input"
+        )
+        st.session_state.llm_settings["openai_api_key"] = st.session_state.azure_api_key_input
+
+        st.text_input(
+            "Deployment Name",
+            value=st.session_state.llm_settings.get("azure_deployment", ""),
+            key="azure_deployment_input",
+            help="e.g., gpt-4.1"
+        )
+        st.session_state.llm_settings["azure_deployment"] = st.session_state.azure_deployment_input
+
+        st.slider(
+            "Temperature",
+            min_value=0.0,
+            max_value=2.0,
+            value=st.session_state.llm_settings["temperature"],
+            step=0.1,
+            key="azure_temperature_slider",
+            help="Higher = more creative, Lower = more focused"
+        )
+        st.session_state.llm_settings["temperature"] = st.session_state.azure_temperature_slider
+
     else:  # openai_compatible
         st.text_input(
             "API Base URL",

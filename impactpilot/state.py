@@ -59,12 +59,13 @@ def init_state():
     # LLM settings (sidebar configuration)
     if "llm_settings" not in st.session_state:
         st.session_state.llm_settings = {
-            "provider": "ollama",  # "ollama" or "openai_compatible"
+            "provider": "azure_openai",  # "ollama", "azure_openai", or "openai_compatible"
             "ollama_host": "http://localhost:11434",
             "ollama_model": "llama2",
             "temperature": 0.7,
             "max_tokens": 1000,
-            "openai_base_url": "",
+            "openai_base_url": "https://daftestopenai.openai.azure.com",
             "openai_api_key": "",
-            "openai_model": "gpt-3.5-turbo"
+            "openai_model": "gpt-3.5-turbo",
+            "azure_deployment": "gpt-4.1"
         }
