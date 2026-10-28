@@ -1,0 +1,65 @@
+# Placeholder reference values until confirmed by business/finance.
+# Every value carries source + as_of so the UI can show provenance.
+meta:
+  source: placeholder — replace with finance-confirmed values
+  as_of: "2026-01-01"
+  confirmed: false
+
+loaded_fte_cost_per_hour:
+  value: 75.0
+  unit: EUR/hour
+  source: placeholder
+  as_of: "2026-01-01"
+  confirmed: false
+
+cost_per_experiment_rerun:
+  value: 500.0
+  unit: EUR
+  source: placeholder
+  as_of: "2026-01-01"
+  confirmed: false
+
+value_per_day_cycle_time_reduction:
+  target_identification:
+    value: 2000.0
+    unit: EUR/day
+    source: placeholder
+    as_of: "2026-01-01"
+    confirmed: false
+  lead_generation_optimization:
+    value: 5000.0
+    unit: EUR/day
+    source: placeholder
+    as_of: "2026-01-01"
+    confirmed: false
+  preclinical:
+    value: 10000.0
+    unit: EUR/day
+    source: placeholder
+    as_of: "2026-01-01"
+    confirmed: false
+  clinical:
+    value: 50000.0
+    unit: EUR/day
+    source: placeholder
+    as_of: "2026-01-01"
+    confirmed: false
+  regulatory:
+    value: 25000.0
+    unit: EUR/day
+    source: placeholder
+    as_of: "2026-01-01"
+    confirmed: false
+  enabling_platform:
+    value: 3000.0
+    unit: EUR/day
+    source: placeholder
+    as_of: "2026-01-01"
+    confirmed: false
+
+probability_factor_default: 1.0
+
+formulas:
+  cycle_time_to_eur: "€ = days_saved × value_per_day(phase) × probability_factor"
+  fte_hours_to_eur: "€ = hours_saved × loaded_fte_cost_per_hour"
+  rerun_avoidance_to_eur: "€ = reruns_avoided × cost_per_experiment_rerun"

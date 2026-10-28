@@ -1,0 +1,42 @@
+# Domains the optional web white-paper search may return. Edit freely; subdomains match too
+# (e.g. "tufts.edu" covers "csdd.tufts.edu"). Results from any other domain are dropped.
+web_sources:
+  agencies:
+    - fda.gov
+    - ema.europa.eu
+    - ich.org
+    - who.int
+    - nih.gov
+    - nice.org.uk
+    - gov.uk
+    - canada.ca
+    - pmda.go.jp
+  consortia_and_associations:
+    - ctti-clinicaltrials.org
+    - transceleratebiopharmainc.com
+    - acrohealth.org
+    - efpia.eu
+    - phrma.org
+    - bio.org
+    - diaglobal.org
+    - scdm.org
+    - imi.europa.eu
+    - ihi.europa.eu
+  research_and_analysts:
+    - tufts.edu
+    - iqvia.com
+    - citeline.com
+    - evaluate.com
+    - rand.org
+    - ohe.org
+  consultancies:
+    - mckinsey.com
+    - bcg.com
+    - bain.com
+    - deloitte.com
+    - pwc.com
+    - ey.com
+    - kpmg.com
+    - accenture.com
+    - lek.com
+    - zs.com

@@ -1,0 +1,29 @@
+dimensions:
+  - id: volume
+    label: Volume
+    description: Throughput or output volume of the process
+    default_unit: units/year
+  - id: value
+    label: Value (sales)
+    description: Commercial / sales value contribution
+    default_unit: EUR/year
+  - id: pts
+    label: PTS
+    description: Probability of technical success
+    default_unit: fraction
+  - id: cycle_time
+    label: Cycle time
+    description: Elapsed time of the process step
+    default_unit: days
+  - id: cost
+    label: Cost
+    description: Direct process cost
+    default_unit: EUR/year
+
+lever_types:
+  - id: faster
+    label: Faster
+  - id: leaner
+    label: Leaner
+  - id: better_decisions
+    label: Better decisions

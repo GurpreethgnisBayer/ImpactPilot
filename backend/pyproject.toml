@@ -1,0 +1,36 @@
+[project]
+name = "impactpilot"
+version = "2.0.0"
+description = "ImpactPilot v2 — guided impact hypothesis and tracking"
+requires-python = ">=3.10"
+dependencies = [
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.30.0",
+  "sqlalchemy>=2.0.0",
+  "alembic>=1.13.0",
+  "pydantic>=2.7.0",
+  "pydantic-settings>=2.3.0",
+  "pyyaml>=6.0",
+  "requests>=2.31.0",
+  "python-dotenv>=1.0.0",
+  "python-multipart>=0.0.9",
+  "fpdf2>=2.7",
+  "python-pptx>=1.0.0",
+  "markdown>=3.6",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0.0",
+  "pytest-cov>=5.0.0",
+  "httpx>=0.27.0",
+  "ruff>=0.6.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

@@ -1,0 +1,12 @@
+# Approved LLM endpoint allowlist. Requests to hosts not listed here are refused.
+# Only hosted OpenAI endpoints are approved; local models are not supported.
+approved_endpoints:
+  - host: api.openai.com
+    schemes: [https]
+    note: OpenAI official
+  - host: "*.openai.azure.com"
+    schemes: [https]
+    note: Azure OpenAI resources
+
+# When true, LLM inference is available; when false, only manual entry works
+llm_enabled_by_default: true

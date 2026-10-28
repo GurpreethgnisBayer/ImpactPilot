@@ -1,0 +1,36 @@
+# Aligned with DACcelerate focus_area codes
+focus_areas:
+  - code: FA1
+    label: Focus Area 1
+  - code: FA2
+    label: Focus Area 2
+  - code: FA3
+    label: Focus Area 3
+  - code: FA4
+    label: Focus Area 4
+  - code: BO
+    label: Business Operations
+  - code: UN
+    label: Unassigned
+
+big_bet_types:
+  - id: Transformational
+    label: Transformational
+  - id: PerformanceImprovers
+    label: Performance improvers
+  - id: Incremental
+    label: Incremental
+  - id: Exploratory
+    label: Exploratory
+
+lifecycle_stages:
+  - id: idea
+    label: Idea
+  - id: poc
+    label: Proof of concept
+  - id: mvp
+    label: MVP
+  - id: portfolio
+    label: Portfolio
+  - id: sunset
+    label: Sunset

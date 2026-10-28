@@ -1,0 +1,19 @@
+phases:
+  - id: target_identification
+    label: Target identification
+    description: Discovery of biological targets
+  - id: lead_generation_optimization
+    label: Lead generation / optimization
+    description: Hit finding through lead optimization
+  - id: preclinical
+    label: Preclinical
+    description: In vitro / in vivo preclinical development
+  - id: clinical
+    label: Clinical
+    description: Clinical development phases
+  - id: regulatory
+    label: Regulatory
+    description: Regulatory submission and approval
+  - id: enabling_platform
+    label: Enabling platform
+    description: Cross-cutting platforms and enabling capabilities

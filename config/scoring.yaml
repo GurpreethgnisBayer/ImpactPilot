@@ -1,0 +1,58 @@
+impact_score_labels:
+  0: Negligible
+  1: Minor
+  2: Moderate
+  3: Major
+  4: Transformational
+
+# Heuristic rules for automatic score suggestion (overridable by user with reason)
+rules:
+  - max_score: 0
+    when: "no dimensions with direction change"
+  - max_score: 1
+    when: "exploratory tier OR single dimension with local-only effect"
+  - max_score: 2
+    when: "emerging_local with 1–2 dimensions and medium confidence"
+  - max_score: 3
+    when: "mature with multi-dimension effect OR high confidence local gain"
+  - max_score: 4
+    when: "mature with multi-dimension transformational effect and high confidence"
+
+maturity_tiers:
+  - id: exploratory
+    label: Exploratory
+    description: Still testing whether a gain exists. Direction + qualitative rationale only; no €.
+  - id: emerging_local
+    label: Emerging local
+    description: Local effect known; phase-level not quantified. Local ranges; € optional and labelled indicative.
+  - id: mature
+    label: Mature
+    description: Data/benchmarks available. Ranges + € conversion + sensitivity.
+
+maturity_questionnaire:
+  - id: q_local_effect_known
+    prompt: Is a measurable local process effect already known?
+    options: [yes, no, unsure]
+  - id: q_benchmarks_available
+    prompt: Are comparable benchmarks or historical data available?
+    options: [yes, no, unsure]
+  - id: q_still_testing
+    prompt: Are you still testing whether any gain exists?
+    options: [yes, no, unsure]
+
+quality_vague_phrases:
+  - improves efficiency
+  - increases productivity
+  - enhances performance
+  - optimizes the process
+  - streamlines workflows
+  - drives value
+  - unlocks potential
+
+quality_competitiveness_terms:
+  - competitive advantage
+  - beat the competition
+  - market leadership
+  - outperform peers
+  - vs competitors
+  - against competitors

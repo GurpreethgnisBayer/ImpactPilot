@@ -1,0 +1,859 @@
+{
+  "$defs": {
+    "BaselineMetric": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "metric": {
+          "title": "Metric",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RangeValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "unit": {
+          "default": "",
+          "title": "Unit",
+          "type": "string"
+        },
+        "source": {
+          "default": "",
+          "title": "Source",
+          "type": "string"
+        },
+        "as_of": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "As Of"
+        },
+        "unknown": {
+          "default": false,
+          "title": "Unknown",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "metric"
+      ],
+      "title": "BaselineMetric",
+      "type": "object"
+    },
+    "Cadence": {
+      "enum": [
+        "monthly",
+        "quarterly",
+        "semiannual"
+      ],
+      "title": "Cadence",
+      "type": "string"
+    },
+    "ChangeLever": {
+      "properties": {
+        "what_changes": {
+          "default": "",
+          "title": "What Changes",
+          "type": "string"
+        },
+        "lever_type": {
+          "default": "",
+          "title": "Lever Type",
+          "type": "string"
+        },
+        "affected_dimension_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Affected Dimension Ids",
+          "type": "array"
+        }
+      },
+      "title": "ChangeLever",
+      "type": "object"
+    },
+    "Confidence": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "title": "Confidence",
+      "type": "string"
+    },
+    "CostLine": {
+      "properties": {
+        "category_id": {
+          "title": "Category Id",
+          "type": "string"
+        },
+        "amount": {
+          "$ref": "#/$defs/RangeValue"
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "category_id",
+        "amount"
+      ],
+      "title": "CostLine",
+      "type": "object"
+    },
+    "DimensionEstimate": {
+      "properties": {
+        "dimension_id": {
+          "title": "Dimension Id",
+          "type": "string"
+        },
+        "direction": {
+          "$ref": "#/$defs/Direction",
+          "default": "flat"
+        },
+        "estimate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RangeValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "confidence": {
+          "$ref": "#/$defs/Confidence",
+          "default": "low"
+        },
+        "mechanism": {
+          "default": "",
+          "title": "Mechanism",
+          "type": "string"
+        },
+        "linked_evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Linked Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "dimension_id"
+      ],
+      "title": "DimensionEstimate",
+      "type": "object"
+    },
+    "Direction": {
+      "enum": [
+        "up",
+        "down",
+        "flat"
+      ],
+      "title": "Direction",
+      "type": "string"
+    },
+    "DoubleCountingFlag": {
+      "properties": {
+        "flagged": {
+          "default": false,
+          "title": "Flagged",
+          "type": "boolean"
+        },
+        "note": {
+          "default": "",
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "title": "DoubleCountingFlag",
+      "type": "object"
+    },
+    "EvidenceItem": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/EvidenceKind"
+        },
+        "title": {
+          "default": "",
+          "title": "Title",
+          "type": "string"
+        },
+        "source_or_link": {
+          "default": "",
+          "title": "Source Or Link",
+          "type": "string"
+        },
+        "summary": {
+          "default": "",
+          "title": "Summary",
+          "type": "string"
+        },
+        "pmid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pmid"
+        },
+        "supports_assumption_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Supports Assumption Ids",
+          "type": "array"
+        },
+        "quotes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Quotes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "EvidenceItem",
+      "type": "object"
+    },
+    "EvidenceKind": {
+      "enum": [
+        "pubmed",
+        "internal_proof_point",
+        "benchmark",
+        "expert_input"
+      ],
+      "title": "EvidenceKind",
+      "type": "string"
+    },
+    "ImpactScore": {
+      "properties": {
+        "score": {
+          "maximum": 4,
+          "minimum": 0,
+          "title": "Score",
+          "type": "integer"
+        },
+        "label": {
+          "default": "",
+          "title": "Label",
+          "type": "string"
+        },
+        "rationale": {
+          "default": "",
+          "title": "Rationale",
+          "type": "string"
+        },
+        "override": {
+          "default": false,
+          "title": "Override",
+          "type": "boolean"
+        },
+        "override_reason": {
+          "default": "",
+          "title": "Override Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "score"
+      ],
+      "title": "ImpactScore",
+      "type": "object"
+    },
+    "Initiative": {
+      "properties": {
+        "title": {
+          "default": "",
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        },
+        "focus_area_code": {
+          "default": "UN",
+          "title": "Focus Area Code",
+          "type": "string"
+        },
+        "big_bet_type": {
+          "default": "",
+          "title": "Big Bet Type",
+          "type": "string"
+        },
+        "big_bet_link": {
+          "default": "",
+          "title": "Big Bet Link",
+          "type": "string"
+        },
+        "lifecycle_stage": {
+          "default": "idea",
+          "title": "Lifecycle Stage",
+          "type": "string"
+        },
+        "roles": {
+          "$ref": "#/$defs/Roles"
+        }
+      },
+      "title": "Initiative",
+      "type": "object"
+    },
+    "KpiPlan": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "definition": {
+          "default": "",
+          "title": "Definition",
+          "type": "string"
+        },
+        "baseline": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RangeValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RangeValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "data_source": {
+          "default": "",
+          "title": "Data Source",
+          "type": "string"
+        },
+        "owner": {
+          "default": "",
+          "title": "Owner",
+          "type": "string"
+        },
+        "cadence": {
+          "$ref": "#/$defs/Cadence",
+          "default": "quarterly"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "KpiPlan",
+      "type": "object"
+    },
+    "MaturityAssessment": {
+      "properties": {
+        "tier": {
+          "$ref": "#/$defs/MaturityTier",
+          "default": "exploratory"
+        },
+        "questionnaire_answers": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Questionnaire Answers",
+          "type": "object"
+        },
+        "rationale": {
+          "default": "",
+          "title": "Rationale",
+          "type": "string"
+        }
+      },
+      "title": "MaturityAssessment",
+      "type": "object"
+    },
+    "MaturityTier": {
+      "enum": [
+        "exploratory",
+        "emerging_local",
+        "mature"
+      ],
+      "title": "MaturityTier",
+      "type": "string"
+    },
+    "MonetizationResult": {
+      "properties": {
+        "dimension_id": {
+          "title": "Dimension Id",
+          "type": "string"
+        },
+        "formula": {
+          "title": "Formula",
+          "type": "string"
+        },
+        "inputs_trace": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Inputs Trace",
+          "type": "array"
+        },
+        "amount_eur": {
+          "$ref": "#/$defs/RangeValue"
+        },
+        "label": {
+          "default": "indicative",
+          "enum": [
+            "indicative",
+            "confirmed"
+          ],
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dimension_id",
+        "formula",
+        "amount_eur"
+      ],
+      "title": "MonetizationResult",
+      "type": "object"
+    },
+    "RangeValue": {
+      "properties": {
+        "low": {
+          "title": "Low",
+          "type": "number"
+        },
+        "base": {
+          "title": "Base",
+          "type": "number"
+        },
+        "high": {
+          "title": "High",
+          "type": "number"
+        },
+        "unit": {
+          "default": "",
+          "title": "Unit",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/ValueSource",
+          "default": "user"
+        },
+        "confirmed": {
+          "default": true,
+          "title": "Confirmed",
+          "type": "boolean"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "rationale": {
+          "default": "",
+          "title": "Rationale",
+          "type": "string"
+        }
+      },
+      "required": [
+        "low",
+        "base",
+        "high"
+      ],
+      "title": "RangeValue",
+      "type": "object"
+    },
+    "RealizationRecord": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kpi_id": {
+          "title": "Kpi Id",
+          "type": "string"
+        },
+        "period": {
+          "title": "Period",
+          "type": "string"
+        },
+        "actual": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RangeValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "notes": {
+          "default": "",
+          "title": "Notes",
+          "type": "string"
+        },
+        "recorded_by": {
+          "default": "",
+          "title": "Recorded By",
+          "type": "string"
+        },
+        "recorded_at": {
+          "format": "date-time",
+          "title": "Recorded At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kpi_id",
+        "period"
+      ],
+      "title": "RealizationRecord",
+      "type": "object"
+    },
+    "Roles": {
+      "properties": {
+        "project_lead_name": {
+          "default": "",
+          "title": "Project Lead Name",
+          "type": "string"
+        },
+        "business_owner_name": {
+          "default": "",
+          "title": "Business Owner Name",
+          "type": "string"
+        },
+        "product_owner_name": {
+          "default": "",
+          "title": "Product Owner Name",
+          "type": "string"
+        },
+        "reviewer_name": {
+          "default": "",
+          "title": "Reviewer Name",
+          "type": "string"
+        },
+        "business_owner_signoff_status": {
+          "$ref": "#/$defs/SignoffStatus",
+          "default": "pending"
+        }
+      },
+      "title": "Roles",
+      "type": "object"
+    },
+    "Scope": {
+      "properties": {
+        "phase_id": {
+          "default": "",
+          "title": "Phase Id",
+          "type": "string"
+        },
+        "process_step": {
+          "default": "",
+          "title": "Process Step",
+          "type": "string"
+        },
+        "process_step_free_text": {
+          "default": "",
+          "title": "Process Step Free Text",
+          "type": "string"
+        }
+      },
+      "title": "Scope",
+      "type": "object"
+    },
+    "ScorecardEntry": {
+      "properties": {
+        "dimension_id": {
+          "title": "Dimension Id",
+          "type": "string"
+        },
+        "direction": {
+          "$ref": "#/$defs/Direction"
+        },
+        "range": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RangeValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "unit": {
+          "default": "",
+          "title": "Unit",
+          "type": "string"
+        },
+        "confidence": {
+          "$ref": "#/$defs/Confidence",
+          "default": "low"
+        },
+        "evidence_count": {
+          "default": 0,
+          "title": "Evidence Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "dimension_id",
+        "direction"
+      ],
+      "title": "ScorecardEntry",
+      "type": "object"
+    },
+    "SignoffStatus": {
+      "enum": [
+        "pending",
+        "confirmed",
+        "rejected"
+      ],
+      "title": "SignoffStatus",
+      "type": "string"
+    },
+    "SuccessStory": {
+      "properties": {
+        "situation": {
+          "default": "",
+          "title": "Situation",
+          "type": "string"
+        },
+        "action": {
+          "default": "",
+          "title": "Action",
+          "type": "string"
+        },
+        "result": {
+          "default": "",
+          "title": "Result",
+          "type": "string"
+        }
+      },
+      "title": "SuccessStory",
+      "type": "object"
+    },
+    "TcoSummary": {
+      "properties": {
+        "horizon_years": {
+          "default": 3,
+          "title": "Horizon Years",
+          "type": "integer"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/CostLine"
+          },
+          "title": "Lines",
+          "type": "array"
+        },
+        "total": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RangeValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "trace": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Trace",
+          "type": "array"
+        }
+      },
+      "title": "TcoSummary",
+      "type": "object"
+    },
+    "ValueSource": {
+      "enum": [
+        "evidence",
+        "user",
+        "llm_suggested",
+        "default",
+        "config"
+      ],
+      "title": "ValueSource",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "schema_version": {
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "status": {
+      "default": "draft",
+      "title": "Status",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    },
+    "created_by": {
+      "default": "local-user",
+      "title": "Created By",
+      "type": "string"
+    },
+    "updated_by": {
+      "default": "local-user",
+      "title": "Updated By",
+      "type": "string"
+    },
+    "initiative": {
+      "$ref": "#/$defs/Initiative"
+    },
+    "scope": {
+      "$ref": "#/$defs/Scope"
+    },
+    "baselines": {
+      "items": {
+        "$ref": "#/$defs/BaselineMetric"
+      },
+      "title": "Baselines",
+      "type": "array"
+    },
+    "change": {
+      "$ref": "#/$defs/ChangeLever"
+    },
+    "maturity": {
+      "$ref": "#/$defs/MaturityAssessment"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/EvidenceItem"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "estimates": {
+      "items": {
+        "$ref": "#/$defs/DimensionEstimate"
+      },
+      "title": "Estimates",
+      "type": "array"
+    },
+    "tco": {
+      "$ref": "#/$defs/TcoSummary"
+    },
+    "monetization": {
+      "items": {
+        "$ref": "#/$defs/MonetizationResult"
+      },
+      "title": "Monetization",
+      "type": "array"
+    },
+    "measurement_plan": {
+      "items": {
+        "$ref": "#/$defs/KpiPlan"
+      },
+      "title": "Measurement Plan",
+      "type": "array"
+    },
+    "realizations": {
+      "items": {
+        "$ref": "#/$defs/RealizationRecord"
+      },
+      "title": "Realizations",
+      "type": "array"
+    },
+    "success_story": {
+      "$ref": "#/$defs/SuccessStory"
+    },
+    "impact_statement": {
+      "default": "",
+      "title": "Impact Statement",
+      "type": "string"
+    },
+    "quality_warnings": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "title": "Quality Warnings",
+      "type": "array"
+    },
+    "scorecard": {
+      "items": {
+        "$ref": "#/$defs/ScorecardEntry"
+      },
+      "title": "Scorecard",
+      "type": "array"
+    },
+    "impact_score": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ImpactScore"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "double_counting": {
+      "$ref": "#/$defs/DoubleCountingFlag"
+    }
+  },
+  "title": "InitiativeRecord",
+  "type": "object"
+}
